@@ -2,6 +2,10 @@ import constants
 import oauth2
 import urllib.parse as urlparse # as just renames it
 import json
+from user import User
+from database import Database
+
+Database.initialize(user='postgres', password='1234', host='localhost', database='Learning')
 
 # Create consumer to identify the app
 consumer = oauth2.Consumer(constants.CONSUMER_KEY, constants.CONSUMER_SECRET)
@@ -54,6 +58,16 @@ access_token  = dict(urlparse.parse_qsl(content.decode('utf-8')))
 
 print(access_token)
 
+email = input('Enter email ')
+first_name = input('Enter name ')
+last_name = input('Enter surname ')
+
+# Create user
+user = User(email, first_name, last_name, access_token['oauth_token'], access_token['oauth_token_secret'], None)
+user.save_to_db()
+
+
+
 # Create an authenticated Token object and use it to perform Twitter API calls on behalf of the user
 authorized_token = oauth2.Token(access_token['oauth_token'], access_token['oauth_token_secret'])
 
@@ -75,8 +89,4 @@ for tweet in tweets['statuses']:
     print(tweet['text'])
 
 # that will actually give us list of all related tweets. Damn that's cool
-
-# Info
-# dict([('hi', '123'), ('hey', '456')])
-# dict is run on the list of tuples in a format key-value into a dictionary, which is handy
 
