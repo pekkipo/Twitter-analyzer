@@ -25,9 +25,24 @@ class User:
         with CursorFromConnectionPool() as cursor:
                 cursor.execute('SELECT * FROM users WHERE email=%s', (email,))
                 user_data = cursor.fetchone()
-                return cls(email=user_data[1],
+                if user_data: # if not None
+                    return cls(email=user_data[1],
                            first_name=user_data[2],
                            last_name=user_data[3],
                            oauth_token = user_data[4],
                            oauth_token_secret = user_data[5],
                            id=user_data[0])
+                #else:
+                   # return None # redundant as by default func returns None
+
+
+    # perform a request
+    def twitter_request(self, url, verb, consumer): # Verbs like GET, POST etc
+        # Create an authenticated Token object and use it to perform Twitter API calls on behalf of the user
+        authorized_token = oauth2.Token(user.oauth_token, user.oauth_token_secret)
+        authorized_client = oauth2.Client(consumer, authorized_token)
+        # Make Twitter API calls
+        response, content = authorized_client.request(
+            'https://api.twitter.com/1.1/search/tweets.json?q=computers+filter:images', 'GET')
+        if response.status != 200:
+            print('Error while searching')
