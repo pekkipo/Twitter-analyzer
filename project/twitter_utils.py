@@ -28,13 +28,16 @@ def get_oauth_verifier(request_token):
     # Ask the user
     # We are doing Pin auth. Just for learning purpose. We have a console application
     print("Go to the following web-site:")
-    print("{}?oauth_token={}".format(constants.AUTHORIZATION_URL, request_token['oauth_token']))
-    # {} will be replaced by two variables
-    # request_token is a dictionary
-    # user gets the pin from the web-page
 
+    print(get_oauth_verifier_url(request_token))
     # User must type the pin
+
     return input("What is the pin? ")
+
+
+def get_oauth_verifier_url(request_token):
+    return "{}?oauth_token={}".format(constants.AUTHORIZATION_URL, request_token['oauth_token'])
+
 
 def get_access_token(request_token, oauth_verifier):
 
