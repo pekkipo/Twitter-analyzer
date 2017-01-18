@@ -1,5 +1,10 @@
 from database import CursorFromConnectionPool
 # database is database.py file, connect is the method
+import oauth2
+from twitter_utils import consumer
+import json
+import constants
+import urllib.parse as urlparse # as just renames it
 
 class User:
 
@@ -37,12 +42,18 @@ class User:
 
 
     # perform a request
-    def twitter_request(self, url, verb, consumer): # Verbs like GET, POST etc
+    def twitter_request(self, url, verb='GET'): # Verbs like GET, POST etc
+
+        # GET is a default value and will be used if nothing were passed as a verb
+
         # Create an authenticated Token object and use it to perform Twitter API calls on behalf of the user
-        authorized_token = oauth2.Token(user.oauth_token, user.oauth_token_secret)
+        authorized_token = oauth2.Token(self.oauth_token, self.oauth_token_secret)
         authorized_client = oauth2.Client(consumer, authorized_token)
         # Make Twitter API calls
-        response, content = authorized_client.request(
-            'https://api.twitter.com/1.1/search/tweets.json?q=computers+filter:images', 'GET')
+        response, content = authorized_client.request(url, verb)
         if response.status != 200:
-            print('Error while searching')
+           print('Error while searching')
+
+        return json.loads(content.encode('utf-8'))
+        # convert json to a python dictionary
+
