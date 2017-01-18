@@ -27,6 +27,11 @@ def homepage():
 
 @app.route('/login/twitter')
 def twitter_login():
+
+    # if the user logged in, show the profile page. If the app is already authorized
+    if 'screen_name' in session:
+        return redirect(url_for('profile'))
+
     request_token = get_request_token()
     # this var is inside the method and will disappear after leaving the func
     # but we need this var later. The way to use it - sessions and cookies
@@ -66,5 +71,14 @@ def twitter_auth():
 def profile():
     return render_template('profile.html', user=g.user) # pass in an arugment
 
+
+@app.route('/search')
+def search():
+    tweets = g.user.twitter_request('https://api.twitter.com/1.1/search/tweets.json?q=computers+filter:images')
+    tweet_texts = [tweet['text'] for tweet in tweets['statuses']]
+    # list comprehension
+    # get text for each tweet in tweets statuses
+
+    return render_template('search.hmtl', content = tweet_texts)
 
 app.run(port=4995, debug=True)
