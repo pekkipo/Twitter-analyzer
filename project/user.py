@@ -3,8 +3,7 @@ from database import CursorFromConnectionPool
 import oauth2
 from twitter_utils import consumer
 import json
-import constants
-import urllib.parse as urlparse # as just renames it
+
 
 class User:
 
@@ -26,12 +25,12 @@ class User:
     def load_from_db_by_screen_name(cls, screen_name): # cls - currently bound class. self woult be currently bound object
         # note that we must pass the email as a parameter
         with CursorFromConnectionPool() as cursor:
-                cursor.execute('SELECT * FROM users WHERE email=%s', (screen_name,))
+                cursor.execute('SELECT * FROM users WHERE screen_name=%s', (screen_name,))
                 user_data = cursor.fetchone()
                 if user_data: # if not None
                     return cls(screen_name = user_data[1],
-                           oauth_token = user_data[3],
-                           oauth_token_secret = user_data[4],
+                           oauth_token = user_data[2],
+                           oauth_token_secret = user_data[3],
                            id=user_data[0])
                     # order on user_data array corresponds to that of the columns in a Postgre table
                 #else:
@@ -51,6 +50,6 @@ class User:
         if response.status != 200:
            print('Error while searching')
 
-        return json.loads(content.encode('utf-8'))
+        return json.loads(content.decode('utf-8'))
         # convert json to a python dictionary
 

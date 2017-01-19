@@ -54,7 +54,7 @@ def logout():
 
 @app.route('/auth/twitter') # we are at the end point 127.0.0.1:4995/auth/twitter?oauth_verifier=some number
 def twitter_auth():
-    oauth_verifier = request.args.get('oauth_verifier')
+    oauth_verifier = request.args.get('oauth_verifier') # gets what goes after oauth_verifier in a string above
     access_token = get_access_token(session['request_token'], oauth_verifier)
 
     user = User.load_from_db_by_screen_name(access_token['screen_name'])
@@ -72,13 +72,17 @@ def profile():
     return render_template('profile.html', user=g.user) # pass in an arugment
 
 
-@app.route('/search')
+@app.route('/search') #127.0.0.1:4995/search?q=cars+filter:images
 def search():
-    tweets = g.user.twitter_request('https://api.twitter.com/1.1/search/tweets.json?q=computers+filter:images')
+
+    query = request.args.get('q')
+
+    tweets = g.user.twitter_request('https://api.twitter.com/1.1/search/tweets.json?q={}'.format(query))
     tweet_texts = [tweet['text'] for tweet in tweets['statuses']]
     # list comprehension
     # get text for each tweet in tweets statuses
 
-    return render_template('search.hmtl', content = tweet_texts)
+    return render_template('search.html', content = tweet_texts)
 
 app.run(port=4995, debug=True)
+

@@ -2,11 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <!-- importing Bootstrap -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- include our own css -->
     <title>Search results</title>
 </head>
 <body>
-    {% for element in content %}
-        <p>{{ element }}</p>
-    {% endfor %}
+<div class = "container">
+    <ul class = "list-group" id="tweets">
+        {% for element in content %}
+            <li class = "list-group-item">{{ element }}</li>
+        <!-- classes are here: http://getbootstrap.com/components/ -->
+        {% endfor %}
+    </ul>
+</div>
 </body>
 </html>
