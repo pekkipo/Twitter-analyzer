@@ -11,9 +11,20 @@
 <body>
 <div class = "container">
     <ul class = "list-group" id="tweets">
+
+        {% set css_class = 'list-group-item-info' %} <!-- Default. For neutral sentiment -->
+
+
         {% for element in content %}
-            <li class = "list-group-item">{{ element }}</li>
-        <!-- classes are here: http://getbootstrap.com/components/ -->
+            {% if element['label'] == 'neg' %} <!-- ginger2 statements -->
+                {% set css_class = 'list-group-item-danger' %} <!-- makes the tweet red. Bootstrap thing -->
+            {% elif element['label'] == 'pos' %}
+                {% set css_class = 'list-group-item-success' %}
+            {% endif %}
+                    <li class = "list-group-item {{ css_class }}">{{ element['tweet'] }}</li>
+                    <!-- [tweet] because now the element is not merely the text but a dict containing the text and the sentiment -->
+                    <!-- gave two classes to li -->
+                    <!-- classes are here: http://getbootstrap.com/components/ -->
         {% endfor %}
     </ul>
 </div>

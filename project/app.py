@@ -2,6 +2,7 @@ from flask import Flask, render_template, session, redirect, request, url_for,g
 from twitter_utils import get_request_token, get_oauth_verifier_url, get_access_token
 from user import User
 from database import Database
+import requests
 
 app = Flask(__name__)
 app.secret_key = '1234'
@@ -78,9 +79,20 @@ def search():
     query = request.args.get('q')
 
     tweets = g.user.twitter_request('https://api.twitter.com/1.1/search/tweets.json?q={}'.format(query))
-    tweet_texts = [tweet['text'] for tweet in tweets['statuses']]
+    tweet_texts = [{'tweet': tweet['text'], 'label':'neutral'} for tweet in tweets['statuses']]
     # list comprehension
     # get text for each tweet in tweets statuses
+    # each tweet is a dict now with its text and sentiment. Neutral by default
+
+    # Sentiment analysis
+    for tweet in tweet_texts:
+        r = requests.post('http://text-processing.com/api/sentiment/', data={'text':tweet['tweet']})
+        # using requests library (not Flask part)
+        json_response = r.json()
+        label = json_response['label']
+        # http://text-processing.com/docs/sentiment.html instructions are here
+        tweet['label'] = label
+        # change the tweet label to positive or negative or leave neutral
 
     return render_template('search.html', content = tweet_texts)
 
