@@ -5,7 +5,7 @@ class Database:
         __connection_pool = None
 
         @classmethod
-        def initialize(cls, **kwargs): # not __init__ method! does not executed automatically
+        def initialize(cls, **kwargs): # not __init__ method!
             cls.__connection_pool = pool.SimpleConnectionPool(1,
                                                               10,
                                                               **kwargs
@@ -25,7 +25,6 @@ class Database:
         def close_all_connections(cls):
             Database.__connection_pool.closeall()
 
-# this class is to teach the usage of WITH statement
 
 class CursorFromConnectionPool:
     def __init__(self):
